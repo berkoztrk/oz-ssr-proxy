@@ -22,6 +22,6 @@
     "dev_linux": "NODE_ENV=dev&&nodemon server",
     "start_linux": "NODE_ENV=prod&&node server",
     "start_windows": "set NODE_ENV=prod&&node server",
-    "start": "npm run start_windows"
+    "start": "npm run start_linux"
   }
 }
