@@ -2,3 +2,5 @@
 /snapshots/*
 *.zip
 .env*
+*.crt
+*.key

@@ -4,10 +4,18 @@ const cheerio = require('cheerio');
 const axios = require('axios').default;
 const NodeCache = require("node-cache");
 const request = require('request');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 
 const cache = new NodeCache();
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PORT_SSL = process.env.PORT_SSL || 3443;
+
+var privateKey  = fs.readFileSync('certs/server.key', 'utf8');
+var certificate = fs.readFileSync('certs/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
 
 function hasExt( url ) {
     var parts = url.split('/'),
@@ -82,8 +90,16 @@ app.get('/*', async (req,res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Proxy listening at ${PORT}`);
+const httpServer = http.createServer(app) ;
+const httpsServer = https.createServer(credentials, app);
+httpServer.listen(PORT, () => {
+    console.log(`Proxy HTTP listening at ${PORT}`);
+    console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
+    console.log(`API: ${process.env.API}`);
+    console.log(`TARGET: ${process.env.TARGET}`);
+});
+httpsServer.listen(PORT_SSL, () => {
+    console.log(`Proxy HTTPS listening at ${PORT_SSL}`);
     console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
     console.log(`API: ${process.env.API}`);
     console.log(`TARGET: ${process.env.TARGET}`);
